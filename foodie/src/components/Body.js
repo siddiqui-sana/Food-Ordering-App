@@ -1,19 +1,77 @@
 import ResturantCard from "./ResturantCard";
-import { data } from "../utils/data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Shimmer from "./Shimmer";
 const Body = () => {
-  const [list, setList] = useState(data);
+  const [list, setList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const filterResturant = () => {
-    setList(list.filter((res) => res.info.avgRating > 4));
+    setList(list.filter((res) => res.info.avgRating >= 4));
+    setFilteredList(list.filter((res) => res.info.avgRating >= 4));
     console.log(list);
   };
-  return (
+  const filterByText = () => {
+    setFilteredList(list.filter((res) => res.info.name.includes(searchText)));
+  };
+
+  useEffect(() => {
+    console.log("useEffect Called"); //This will be console logged after the line 13. Because first the body is rendered.
+    fetchData();
+  }, []);
+  console.log("Body Called");
+  const fetchData = async () => {
+    const data = await fetch(
+      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=17.406498&lng=78.47724389999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+    ); //(fetch function is geiven by browser that the JS engine has)
+    const json = await data.json();
+    // console.log(
+    //   json?.data?.cards[5].card?.card?.gridElements.infoWithStyle.restaurants
+    // );
+    // setList(
+    //   json.data.cards[1].card.card.gridElements.infoWithStyle.restaurants
+    // );
+    //Instad of setting the data as done in above fucntion call, we can use the concept of optional chaining (better way to handle data, just put question mark before every dot)
+    setList(
+      json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
+    setFilteredList(
+      json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
+  };
+  //For showing loading screen until the API hasn't been fetched after the page render: (Conditional Rendering)
+  // if (list.length === 0) {
+  //   return <Shimmer />;
+  // }
+
+  //Conditional Rendering
+
+  return list.length === 0 ? (
+    <Shimmer />
+  ) : (
     <div className="body">
       <div className="filter">
+        <div className="search">
+          <input
+            type="text"
+            className="search-box"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+          <button
+            onClick={() => {
+              filterByText();
+              console.log(searchText);
+            }}
+          >
+            Search
+          </button>
+        </div>
+
         <button
           className="filter-btn"
           onClick={() => {
-            console.log("Button Clicked");
             filterResturant();
           }}
         >
@@ -21,8 +79,7 @@ const Body = () => {
         </button>
       </div>
       <div className="res-container">
-        {list.map((obj) => {
-          console.log(obj);
+        {filteredList.map((obj) => {
           return <ResturantCard key={obj.info.id} resData={obj} />;
         })}
         {/* //Remember: resData key is same name will be passed as wrapped in prop */}

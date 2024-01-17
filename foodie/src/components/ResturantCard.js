@@ -1,6 +1,6 @@
 import { CDN_URL } from "../utils/constants";
 const ResturantCard = (props) => {
-  console.log("Type of the props: ", typeof props);
+  // console.log("Type of the props: ", typeof props);
   //prop is always an object, we can de structure the prop like:
   // **const ResturantCard = ({name, speciality, rating, deliverytime}) => {** Remember the key name should be same as passed in the caller component.
   const cardStyle = { backgroundColor: "#D3D3D3" };
@@ -8,8 +8,8 @@ const ResturantCard = (props) => {
   // const { name, speciality, rating, deliverytime } = props;
   // console.log(name, speciality, rating, deliverytime);
   const infoObj = resData.info;
-  console.log(infoObj);
-  console.log("What is this");
+  // console.log(infoObj);
+  // console.log("What is this");
   const { name, cuisines, avgRating, cloudinaryImageId } = infoObj; //Destructuring for cleaner code.
   //Which ever key we want to from infoObj, we get here, so agian again we
   //don't need to do infoObj.PROPERTY_NAME
