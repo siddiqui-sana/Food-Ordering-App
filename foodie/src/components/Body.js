@@ -1,6 +1,8 @@
 import ResturantCard from "./ResturantCard";
 import { useState, useEffect } from "react";
 import Shimmer from "./Shimmer";
+import { Link } from "react-router-dom";
+
 const Body = () => {
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
@@ -24,18 +26,16 @@ const Body = () => {
       "https://www.swiggy.com/dapi/restaurants/list/v5?lat=17.406498&lng=78.47724389999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
     ); //(fetch function is geiven by browser that the JS engine has)
     const json = await data.json();
-    // console.log(
-    //   json?.data?.cards[5].card?.card?.gridElements.infoWithStyle.restaurants
-    // );
+    console.log(json?.data.card);
     // setList(
     //   json.data.cards[1].card.card.gridElements.infoWithStyle.restaurants
     // );
     //Instad of setting the data as done in above fucntion call, we can use the concept of optional chaining (better way to handle data, just put question mark before every dot)
     setList(
-      json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
     setFilteredList(
-      json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
   };
   //For showing loading screen until the API hasn't been fetched after the page render: (Conditional Rendering)
@@ -80,7 +80,12 @@ const Body = () => {
       </div>
       <div className="res-container">
         {filteredList.map((obj) => {
-          return <ResturantCard key={obj.info.id} resData={obj} />;
+          return (
+            <Link to={"/restaurants/" + obj.info.id} key={obj.info.id}>
+              {/* //This is the dynamic path, so the id will be dynamic. Inside the restaurants component, we can access this dynamic path using useParams hook. */}
+              <ResturantCard resData={obj} />
+            </Link>
+          );
         })}
         {/* //Remember: resData key is same name will be passed as wrapped in prop */}
       </div>
